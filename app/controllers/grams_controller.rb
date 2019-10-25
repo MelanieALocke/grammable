@@ -1,5 +1,5 @@
 class GramsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
   def show
     @gram = find_gram
@@ -9,11 +9,14 @@ class GramsController < ApplicationController
   def edit
     @gram = find_gram
     return blank_gram if @gram.blank?
+    return blank_gram(:forbidden) if @gram.user != current_user
   end
 
   def update
     @gram = find_gram
-    return blank_gram if @gram.blank? 
+    return blank_gram if @gram.blank?
+
+    return blank_gram(:forbidden) if @gram.user != current_user
 
     @gram.update_attributes(gram_params)
 
@@ -27,6 +30,8 @@ class GramsController < ApplicationController
   def destroy
     @gram = find_gram
     return blank_gram if @gram.blank?
+
+    return blank_gram(:forbidden) if @gram.user != current_user
 
     @gram.destroy
     redirect_to root_path
@@ -55,10 +60,8 @@ class GramsController < ApplicationController
     params.require(:gram).permit(:message)
   end
 
-  def blank_gram
-    if @gram.blank?
-      render plain: 'Not found :(', status: :not_found
-    end
+  def blank_gram(status=:not_found)
+    render plain: "#{status.to_s.titleize} :(", status: status
   end
 
   def find_gram
