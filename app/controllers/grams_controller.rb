@@ -16,12 +16,20 @@ class GramsController < ApplicationController
     return blank_gram if @gram.blank? 
 
     @gram.update_attributes(gram_params)
-    
+
     if @gram.valid?
       redirect_to root_path
     else
       return render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @gram = find_gram
+    return blank_gram if @gram.blank?
+
+    @gram.destroy
+    redirect_to root_path
   end
 
   def new
