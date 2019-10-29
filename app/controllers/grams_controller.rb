@@ -61,10 +61,6 @@ class GramsController < ApplicationController
     params.require(:gram).permit(:picture, :message)
   end
 
-  def blank_gram(status=:not_found)
-    render plain: "#{status.to_s.titleize} :(", status: status
-  end
-
   def find_gram
     Gram.find_by_id(params[:id])
   end
